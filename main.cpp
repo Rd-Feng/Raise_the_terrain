@@ -40,6 +40,12 @@ int main( int argc, char* args[] )
                 if (e.type == SDL_QUIT){
                     quit = true;
                 }
+                if (e.type == SDL_KEYDOWN)
+                {
+                    
+                    if (e.key.keysym.sym == SDLK_ESCAPE)
+                        quit = true;
+                }
                 /* draw  grid*/
                 for (i = 0; i < 8; i++)
                     for (j = 0; j < 7; j++)
