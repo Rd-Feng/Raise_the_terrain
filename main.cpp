@@ -22,7 +22,7 @@ int main( int argc, char* args[] )
 {
     int i, j;
     
-    init_grid(g, 60, z);
+    init_grid(g, 90, z);
     if (!init(&window, &renderer))
     {
         printf("Failed to initialize!\n");
@@ -34,27 +34,34 @@ int main( int argc, char* args[] )
 
         SDL_SetRenderDrawColor(renderer, 255, 255, 255, SDL_ALPHA_OPAQUE);
         bool quit = false;
+        double angle = 0;
         while (!quit)
         {
+            SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
+            SDL_RenderClear(renderer);
             while (SDL_PollEvent(&e)){
                 if (e.type == SDL_QUIT){
                     quit = true;
                 }
                 if (e.type == SDL_KEYDOWN)
                 {
-                    
-                    if (e.key.keysym.sym == SDLK_ESCAPE)
-                        quit = true;
+                    switch (e.key.keysym.sym)
+                    {
+                        case SDLK_ESCAPE: quit = true; break;
+                        case SDLK_LEFT: angle += 5; break;
+                        case SDLK_RIGHT: angle -= 5;
+                    }
                 }
+                SDL_SetRenderDrawColor(renderer, 255, 255, 255, SDL_ALPHA_OPAQUE);
                 /* draw  grid*/
                 for (i = 0; i < 8; i++)
                     for (j = 0; j < 7; j++)
                         draw_line(renderer, g[j][i][0], g[j][i][1], g[j][i][2],
-                                  g[j + 1][i][0], g[j + 1][i][1], g[j + 1][i][2]);
+                                  g[j + 1][i][0], g[j + 1][i][1], g[j + 1][i][2], angle);
                 for (i = 0; i < 8; i++)
                     for (j = 0; j < 7; j++)
                         draw_line(renderer, g[i][j][0], g[i][j][1], g[i][j][2],
-                                  g[i][j + 1][0], g[i][j + 1][1], g[i][j + 1][2]);
+                                  g[i][j + 1][0], g[i][j + 1][1], g[i][j + 1][2], angle);
                 SDL_RenderPresent(renderer);
             }
         }
@@ -63,11 +70,11 @@ int main( int argc, char* args[] )
     return 0;
 }
 
-void draw_line(SDL_Renderer *rend, double x1, double y1, double z1, double x2, double y2, double z2)
+void draw_line(SDL_Renderer *rend, double x1, double y1, double z1, double x2, double y2, double z2, double angle)
 {
     //z1 = z2 = 0;
-    project(x1, y1, z1, incl, &wx1, &wy1);
-    project(x2, y2, z2, incl, &wx2, &wy2);
+    project(x1, y1, z1, incl, &wx1, &wy1, angle);
+    project(x2, y2, z2, incl, &wx2, &wy2, angle);
     //wx1 = x1; wx2 = x2; wy1 = y1; wy2 = y2;
     wx1 += SCREEN_WIDTH / 2;
     wx2 += SCREEN_WIDTH / 2;
